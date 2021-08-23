@@ -2,6 +2,7 @@
 //kurs class
 class Course {
     constructor(title, instructor, image) {
+        this.courseId = Math.floor(Math.random()*10000);
         this.title = title;
         this.instructor = instructor;
         this.image = image;
@@ -16,7 +17,7 @@ class UI {
                     <td><img src="img/${course.image}" width="100" /></td>
                     <td>${course.title}</td>
                     <td>${course.instructor}</td>
-                    <td><a href="#" class="btn btn-danger btn-sm delete">sil</a></td>
+                    <td><a href="#" data-id="${course.courseId}" class="btn btn-danger btn-sm delete">sil</a></td>
                     </tr>
                     `;
         list.innerHTML += html;
@@ -61,7 +62,7 @@ class Storage {
             courses = JSON.parse(localStorage.getItem('courses'));
         }
 
-        return courses;
+        return courses.reverse();
     }
 
     //verileri ekranda gösterme
@@ -81,8 +82,19 @@ class Storage {
     }
 
     //kurs silme
-    static deleteCourse(course) {
+    static deleteCourse(element) {
+        if(element.classList.contains('delete')){
+            const id=element.getAttribute('data-id');
+           const courses = Storage.getCourses();
+           courses.forEach((course,index)=>{
+               if(course.courseId==id){
+                courses.splice(index,1);
+               }
+           })
 
+           localStorage.setItem('courses',JSON.stringify(courses));
+          return true;
+        }
     }
 }
 //sayfa yüklendiginde listelenecek olan kursların alınması
@@ -97,7 +109,6 @@ document.getElementById('new-course').addEventListener('submit', function (e) {
     //kurs objesi oluşturma
     const course = new Course(title, instructor, image);
     //console.log(course);
-    //veri tabanına kayıt
 
     //ui oluşturma
     const ui = new UI();
@@ -123,10 +134,12 @@ document.getElementById('new-course').addEventListener('submit', function (e) {
 document.getElementById("course-list").addEventListener('click', function (e) {
 
     const ui = new UI();
-    ui.deleteCourse(e.target);
+   
 
     //Storage den kurs silme
-    //Storage.deleteCourse();
+     if(Storage.deleteCourse(e.target)){
+        ui.deleteCourse(e.target);
+     }
     ui.showAlert('kurs silindi!', 'danger');
 
     e.preventDefault();
