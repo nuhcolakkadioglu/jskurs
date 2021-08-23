@@ -10,6 +10,7 @@ function UI() {
 
 }
 
+//yeni kayıt ekleme
 UI.prototype.addCourseToList = function (course) {
     const list = document.getElementById('course-list');
     var html = `
