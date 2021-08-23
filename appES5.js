@@ -47,7 +47,6 @@ UI.prototype.showAlert = function (message, className) {
                 </div>
                 `;
 
-
     const row = document.querySelector(".row");
     row.insertAdjacentHTML('beforeBegin',html);
 
