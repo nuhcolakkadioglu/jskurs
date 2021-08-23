@@ -21,23 +21,41 @@ UI.prototype.addCourseToList = function (course) {
                 <td><a href="#" class="btn btn-danger btn-sm delete">sil</a></td>
                 </tr>
                 `;
-    list.innerHTML+=html;
+    list.innerHTML += html;
 }
 //form kontrollerinin kayıtdan sonra temizlenmesi 
 UI.prototype.clearsControls = function () {
-    const title = document.getElementById('title').value="";
-    const instructor = document.getElementById('instructor').value="";
-    const image = document.getElementById('image').value="";
+    const title = document.getElementById('title').value = "";
+    const instructor = document.getElementById('instructor').value = "";
+    const image = document.getElementById('image').value = "";
 
 }
 //kurs silme
 
-UI.prototype.deleteCourse = function(element){
-    if(element.classList.contains('delete')){
+UI.prototype.deleteCourse = function (element) {
+    if (element.classList.contains('delete')) {
         element.parentElement.parentElement.remove();
     }
 }
 
+//kullanıcı bilgilendirme mesajlarının oluşturulması
+UI.prototype.showAlert = function (message, className) {
+
+    var html = `
+                <div class="alert alert-${className}">
+                    ${message}
+                </div>
+                `;
+
+
+    const row = document.querySelector(".row");
+    row.insertAdjacentHTML('beforeBegin',html);
+
+    setTimeout(()=>{
+        document.querySelector('.alert').remove();
+    },3000);
+
+}
 document.getElementById('new-course').addEventListener('submit', function (e) {
 
     const title = document.getElementById('title').value;
@@ -52,21 +70,26 @@ document.getElementById('new-course').addEventListener('submit', function (e) {
     //ui oluşturma
     const ui = new UI();
 
-    //kurs ekleme 
-    ui.addCourseToList(course);
+    //boş alan uyarı mesajı
+    if (title === '' || instructor === '' || image === '') {
+        ui.showAlert('formda boş alan bırakmayınız!', 'warning');
+    } else {
+        //kurs ekleme 
+        ui.addCourseToList(course);
 
-    //formu temizleme
-    ui.clearsControls();
+        //formu temizleme
+        ui.clearsControls();
 
-
+        ui.showAlert('yeni kurs eklendi', 'success');
+    }
     e.preventDefault();
 });
 
-document.getElementById("course-list").addEventListener('click',function(e){
+document.getElementById("course-list").addEventListener('click', function (e) {
 
-     const ui = new UI();
-     ui.deleteCourse(e.target);
-       
+    const ui = new UI();
+    ui.deleteCourse(e.target);
+    ui.showAlert('kurs silindi!', 'danger');
 
     e.preventDefault();
 })
