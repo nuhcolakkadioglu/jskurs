@@ -1,4 +1,5 @@
 
+//kurs class
 class Course {
     constructor(title, instructor, image) {
         this.title = title;
@@ -6,7 +7,7 @@ class Course {
         this.image = image;
     }
 }
-
+//ui class
 class UI {
     addCourseToList(course) {
         const list = document.getElementById('course-list');
@@ -49,6 +50,43 @@ class UI {
     }
 }
 
+class Storage {
+    //verileri okuma
+    static getCourses() {
+        let courses;
+
+        if (localStorage.getItem('courses') === null) {
+            courses = [];
+        } else {
+            courses = JSON.parse(localStorage.getItem('courses'));
+        }
+
+        return courses;
+    }
+
+    //verileri ekranda gösterme
+    static displayCourse() {
+        const courses = Storage.getCourses();
+        courses.forEach(course=>{
+            const ui = new  UI();
+            ui.addCourseToList(course);
+        });
+    }
+
+    //kurs ekleme
+    static addCourse(course) {
+        const courses = Storage.getCourses();
+        courses.push(course);
+        localStorage.setItem('courses',JSON.stringify(courses));
+    }
+
+    //kurs silme
+    static deleteCourse(course) {
+
+    }
+}
+//sayfa yüklendiginde listelenecek olan kursların alınması
+document.addEventListener('DOMContentLoaded', Storage.displayCourse());
 
 document.getElementById('new-course').addEventListener('submit', function (e) {
 
@@ -71,6 +109,9 @@ document.getElementById('new-course').addEventListener('submit', function (e) {
         //kurs ekleme 
         ui.addCourseToList(course);
 
+        //Storage e kaydın eklenmesi
+        Storage.addCourse(course);
+
         //formu temizleme
         ui.clearsControls();
 
@@ -83,6 +124,9 @@ document.getElementById("course-list").addEventListener('click', function (e) {
 
     const ui = new UI();
     ui.deleteCourse(e.target);
+
+    //Storage den kurs silme
+    //Storage.deleteCourse();
     ui.showAlert('kurs silindi!', 'danger');
 
     e.preventDefault();
